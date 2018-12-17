@@ -1,4 +1,4 @@
-package com.joonhak.controller;
+package com.joonhak.web;
 
 import com.joonhak.entity.account.Account;
 import com.joonhak.service.AccountService;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-public class UserController {
+public class AccountController {
 	
 	@Autowired
 	private AccountService accountService;

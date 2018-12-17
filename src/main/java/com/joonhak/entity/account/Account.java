@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,9 +25,11 @@ public class Account implements Serializable {
 	private List<Role> roles;
 	
 	// Must be deleted after test
-	public Account(String username, String password) {
+	public Account(String username, String password, Role role) {
 		this.username = username;
 		this.password = password;
+		this.roles = new ArrayList<>();
+		this.roles.add(role);
 	}
 	
 }

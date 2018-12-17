@@ -16,7 +16,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
 		super.configure(resources);
 		// TODO: Find for 'What is resourceId in OAuth2?'
-		// resources.resourceId("resource_id").stateless(true);
+		// resources.resourceId("blog_resource").stateless(true);
 	}
 	
 	@Override
@@ -27,10 +27,12 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 				.and()
 			.authorizeRequests()
 				// For Register user
-				.antMatchers(HttpMethod.POST, "/users/").permitAll()
-				.antMatchers("/users/**").authenticated()
+					.antMatchers(HttpMethod.POST, "/users/").permitAll()
+					.antMatchers("/users/**").hasRole("ADMIN")
+					.antMatchers("/**").authenticated()
 				.and()
 			.exceptionHandling()
-				.accessDeniedHandler(new OAuth2AccessDeniedHandler());
+					.accessDeniedHandler(new OAuth2AccessDeniedHandler());
 	}
+	
 }
