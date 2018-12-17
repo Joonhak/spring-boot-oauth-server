@@ -1,6 +1,7 @@
 package com.joonhak.config;
 
 import com.joonhak.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,11 +14,13 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
 import java.util.Arrays;
 
 @Configuration
@@ -37,12 +40,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 	
 	@Bean
-	public TokenStore tokenStore() {
+	public TokenStore tokenStore(DataSource dataSource) {
 		/*
 		 * Temporary setup.
 		 * after test, change this setup. ( jdbc or otherwise )
 		 */
-		return new InMemoryTokenStore();
+		return new JdbcTokenStore(dataSource);
 	}
 	
 	@Bean
