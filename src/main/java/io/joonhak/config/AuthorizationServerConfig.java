@@ -1,6 +1,5 @@
 package io.joonhak.config;
 
-import io.joonhak.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,24 +27,24 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	private AuthenticationManager authenticationManager;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	@Autowired
-	private AccountService accountService;
 	
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-		super.configure(security);
+		security
+				.tokenKeyAccess("permitAll()")
+				.checkTokenAccess("isAuthenticated()");
 	}
 	
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-		clients
+		clients /*.jdbc(dataSource)*/
 				.inMemory()
 				.withClient("client")
 				.secret( passwordEncoder.encode("passwd"))
 				.authorizedGrantTypes(
 						"password", "authorization_code", "refresh_token", "implicit"
 				)
-				.scopes("read")
+				.scopes("read", "write")
 				.accessTokenValiditySeconds(10*60)
 				.refreshTokenValiditySeconds(60*60);
 	}
@@ -53,8 +52,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 		endpoints.tokenStore(new JdbcTokenStore(dataSource))
-				.authenticationManager(authenticationManager)
-				.userDetailsService(accountService);
+				.authenticationManager(authenticationManager);
 	}
 	
 }

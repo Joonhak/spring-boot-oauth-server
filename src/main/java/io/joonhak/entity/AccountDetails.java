@@ -21,4 +21,5 @@ public class AccountDetails extends User {
 				.map( r -> new SimpleGrantedAuthority(ROLE_PREFIX + r.getName()) )
 				.collect(Collectors.toList());
 	}
+	
 }
