@@ -1,37 +1,30 @@
-package com.joonhak.config;
+package io.joonhak.config;
 
-import com.joonhak.service.AccountService;
+import io.joonhak.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.annotation.Resource;
-import javax.sql.DataSource;
 import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
-	@Resource(name = "accountService")
+	@Autowired
 	private AccountService accountService;
 	
 	/**
-	 *
 	 * {@link PasswordEncoderFactories#createDelegatingPasswordEncoder()}
 	 */
 	@Bean
@@ -39,15 +32,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 	}
 	
+	/**
+	 * CORS configuration.
+	 * @see <a href="https://developer.mozilla.org/ko/docs/Web/HTTP/Access_control_CORS"> MDN - CORS ( korean ) </a>
+	 */
 	@Bean
-	public TokenStore tokenStore(DataSource dataSource) {
-		/*
-		 * Temporary setup.
-		 * after test, change this setup. ( jdbc or otherwise )
-		 */
-		return new JdbcTokenStore(dataSource);
+	public CorsConfigurationSource corsConfiguration() {
+		var source = new UrlBasedCorsConfigurationSource();
+		var configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(Arrays.asList("*"));
+		configuration.setAllowedMethods(Arrays.asList("POST"));
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
 	}
 	
+	/**
+	 * This Object is at WebSecurityConfigurerAdapter ( abstract class ),
+	 * But it is not a @Bean, so have to overriding
+	 * {@link WebSecurityConfigurerAdapter#authenticationManager()}
+	 */
 	@Bean
 	@Override
 	protected AuthenticationManager authenticationManager() throws Exception {
@@ -60,31 +63,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 	
 	@Override
-	public void configure(WebSecurity web) throws Exception {
-		web // Ignoring static resources
-			.ignoring()
-				.antMatchers("/css/**", "/js/**", "/img/**");
-	}
-	
-	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 				.csrf().disable()
 				.cors();
-	}
-	
-	/**
-	 * CORS configuration.
-	 * @see <a href="https://developer.mozilla.org/ko/docs/Web/HTTP/Access_control_CORS"> MDN - CORS ( korean ) </a>
-	 */
-	@Bean
-	public CorsConfigurationSource corsConfiguration() {
-		var configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("*"));
-		configuration.setAllowedMethods(Arrays.asList("POST"));
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
-		return source;
 	}
 	
 }
