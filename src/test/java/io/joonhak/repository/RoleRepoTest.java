@@ -1,6 +1,6 @@
-package com.joonhak.repository;
+package io.joonhak.repository;
 
-import com.joonhak.entity.account.Role;
+import io.joonhak.entity.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,8 +20,8 @@ public class RoleRepoTest {
 	
 	@Test
 	public void roleSaveTest() {
-		final var roleGuest = new Role("BASIC");
-		final var roleAdmin = new Role("ADMIN");
+		final var roleGuest = new Role(null, "BASIC");
+		final var roleAdmin = new Role(null, "ADMIN");
 		final var result = roleRepository.saveAll( Arrays.asList(roleGuest, roleAdmin) );
 		log.info("Saved roles : {}", result);
 	}

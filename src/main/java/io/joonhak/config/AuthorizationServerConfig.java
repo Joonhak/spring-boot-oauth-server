@@ -1,6 +1,6 @@
-package com.joonhak.config;
+package io.joonhak.config;
 
-import com.joonhak.service.AccountService;
+import io.joonhak.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,7 +10,9 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+
+import javax.sql.DataSource;
 
 /**
  * Configuration Authorization Server.
@@ -20,23 +22,12 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 	
-	/**
-	 * {@link WebSecurityConfig#tokenStore()}
-	 */
 	@Autowired
-	private TokenStore tokenStore;
-	
-	/**
-	 * This Object is at WebSecurityConfigurerAdapter,
-	 * But it is not @Bean, so have to overriding
-	 * {@link WebSecurityConfig#authenticationManager()}
-	 */
+	private DataSource dataSource;
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
 	@Autowired
 	private AccountService accountService;
 	
@@ -61,7 +52,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-		endpoints.tokenStore(tokenStore)
+		endpoints.tokenStore(new JdbcTokenStore(dataSource))
 				.authenticationManager(authenticationManager)
 				.userDetailsService(accountService);
 	}

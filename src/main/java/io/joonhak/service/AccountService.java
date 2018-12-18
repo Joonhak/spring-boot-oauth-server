@@ -1,10 +1,10 @@
-package com.joonhak.service;
+package io.joonhak.service;
 
-import com.joonhak.entity.account.Account;
-import com.joonhak.entity.account.AccountDetails;
-import com.joonhak.entity.account.Role;
-import com.joonhak.repository.AccountRepository;
-import com.joonhak.repository.RoleRepository;
+import io.joonhak.entity.Account;
+import io.joonhak.entity.AccountDetails;
+import io.joonhak.entity.Role;
+import io.joonhak.repository.AccountRepository;
+import io.joonhak.repository.RoleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,8 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.Optional;
+import java.util.Arrays;
 
 @Slf4j
 @Service
@@ -41,35 +40,26 @@ public class AccountService implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return Optional.ofNullable(accountRepo.findByUsername(username))
+		return accountRepo.findById(username)
 				.map(AccountDetails::new)
-				.orElseThrow( () -> new UsernameNotFoundException("Can not find username : " + username) );
+				.orElseThrow( () -> new UsernameNotFoundException("CAN NOT FIND USER, USERNAME : " + username) );
 	}
 	
-	public List<Account> findAll() {
-		return accountRepo.findAll();
-	}
-	
-	public Account save(Account account) {
+	private Account save(Account account) {
 		account.setPassword( passwordEncoder.encode(account.getPassword()) );
 		return accountRepo.save(account);
-	}
-	
-	public void delete(long id) {
-		accountRepo.deleteById(id);
-		// or
-		// accountRepo.deleteByUsername(String username); <- Need Add method in AccountRepository
 	}
 	
 	// Must be deleted after test
 	@PostConstruct
 	public void init() {
-		var account = accountRepo.findByUsername("user");
-		if ( account == null ) {
-			var roleGuest = roleRepo.save( new Role("ADMIN") );
-			var saved = this.save(new Account("user", "pass", roleGuest));
-			log.info("Saved account : {}", saved);
-		}
+		accountRepo.findById("user")
+				.ifPresentOrElse( a -> log.info("ACCOUNT : {}", a),
+						() -> {
+							final var role = roleRepo.save( new Role(null, "ADMIN") );
+							final var account = this.save( new Account("user", "pass", "admin", Arrays.asList(role)) );
+							log.info("SAVE DEFAULT ACCOUNT.. {}", account);
+						});
 	}
 	
 }

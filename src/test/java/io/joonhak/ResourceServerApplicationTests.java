@@ -1,4 +1,4 @@
-package com.joonhak;
+package io.joonhak;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,9 +1,6 @@
-package com.joonhak.entity.account;
+package io.joonhak.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,14 +12,11 @@ import java.io.Serializable;
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor // Must be deleted after test
 public class Role implements Serializable {
 	
 	@Id @GeneratedValue
 	private Long id;
 	private String name;
-	
-	public Role(String name) {
-		this.name = name;
-	}
 	
 }
