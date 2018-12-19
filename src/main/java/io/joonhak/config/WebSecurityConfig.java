@@ -49,6 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	/**
 	 * This Object is at WebSecurityConfigurerAdapter ( abstract class ),
 	 * But it is not a @Bean, so have to overriding
+	 * And this Object only when using for Password authentication flow
 	 * {@link WebSecurityConfigurerAdapter#authenticationManager()}
 	 */
 	@Bean
