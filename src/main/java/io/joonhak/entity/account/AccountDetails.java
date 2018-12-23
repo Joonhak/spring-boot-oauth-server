@@ -1,4 +1,4 @@
-package io.joonhak.entity;
+package io.joonhak.entity.account;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
