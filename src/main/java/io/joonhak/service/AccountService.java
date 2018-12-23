@@ -41,10 +41,7 @@ public class AccountService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		return accountRepo.findById(username)
-				.map( a -> {
-					log.info("ACCOUNT : {}", a);
-					return new AccountDetails(a);
-				})
+				.map(AccountDetails::new)
 				.orElseThrow( () -> new UsernameNotFoundException("CAN NOT FIND USER, USERNAME : " + username) );
 	}
 	
