@@ -1,10 +1,10 @@
 package io.joonhak.service;
 
-import io.joonhak.entity.Account;
-import io.joonhak.entity.AccountDetails;
-import io.joonhak.entity.Role;
-import io.joonhak.repository.AccountRepository;
-import io.joonhak.repository.RoleRepository;
+import io.joonhak.entity.account.Account;
+import io.joonhak.entity.account.AccountDetails;
+import io.joonhak.entity.account.Role;
+import io.joonhak.repository.account.AccountRepository;
+import io.joonhak.repository.account.RoleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
+import java.util.Collections;
 
 @Slf4j
 @Service
@@ -57,7 +57,7 @@ public class AccountService implements UserDetailsService {
 				.ifPresentOrElse( a -> log.info("ACCOUNT : {}", a),
 						() -> {
 							final var role = roleRepo.save( new Role(null, "ADMIN") );
-							final var account = this.save( new Account("user", "pass", "admin", Arrays.asList(role)) );
+							final var account = this.save( new Account("user", "pass", "admin", Collections.singletonList(role)) );
 							log.info("SAVE DEFAULT ACCOUNT.. {}", account);
 						});
 	}
