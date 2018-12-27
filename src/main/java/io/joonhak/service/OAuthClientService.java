@@ -54,7 +54,6 @@ public class OAuthClientService implements ClientDetailsService {
 							, null
 							, null
 					);
-					
 					log.info("SAVE DEFAULT CLIENT.. {}", this.save(client));
 				}
 		);
