@@ -1,5 +1,6 @@
 package io.joonhak.config;
 
+import io.joonhak.service.AccountService;
 import io.joonhak.service.OAuthClientService;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 import org.springframework.security.oauth2.provider.token.AccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
 /**
  * Configuration Authorization Server.
@@ -25,7 +25,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 public class AuthorizationServerConfig extends OAuth2AuthorizationServerConfiguration {
 	
 	@Autowired
-	private JwtAccessTokenConverter jwtAccessTokenConverter;
+	private AccountService accountService;
 	@Autowired
 	private OAuthClientService oAuthClientService;
 	
@@ -59,8 +59,7 @@ public class AuthorizationServerConfig extends OAuth2AuthorizationServerConfigur
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 		super.configure(endpoints);
-		endpoints
-				.accessTokenConverter(jwtAccessTokenConverter);
+		endpoints.userDetailsService(accountService);
 	}
 	
 }
